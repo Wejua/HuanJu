@@ -38,7 +38,7 @@ public class User {
     @Column(name = "created_at", updatable = false) // updatable 表示 UPDATE 时忽略该字段，值不会改变
     private LocalDateTime createdAt;
 
-    @UpdateTimestamp
+    @UpdateTimestamp // 更新就填入当时的时间戳
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 }

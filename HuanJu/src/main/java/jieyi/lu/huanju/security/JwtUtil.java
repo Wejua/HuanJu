@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
-@Component
+@Component  // 没有写构造方法，Java 默认会生成无参构造方法
 public class JwtUtil {
 
     @Value("${jwt.secret:mySecretKey}") // 从配置文件中读取jwt.secret, 找不到配置时用 mySecretKey

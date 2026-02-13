@@ -22,7 +22,7 @@ public class AuthService {
     public LoginResponse login(LoginRequest loginRequest) {
         // 1. 验证用户是否存在
         User user = userRepository.findByUsername(loginRequest.getUsername())
-                .orElseThrow(() -> new RuntimeException("用户名或密码错误"));
+                .orElseThrow(() -> new RuntimeException("用户名或密码错误")); // Lambda表达式：() -> new RuntimeException() 匹配任何无参、返回RuntimeException的接口方法, 这里就匹配了get()方法
 
         // 2. 验证密码
         if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {

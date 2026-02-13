@@ -6,12 +6,18 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.JWTVerifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Scope;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
+// 多个地方使用这个Bean也是使用同一个单例，因为默认是@Scope("singleton")
+// @Scope("prototype")  // 每次注入都创建新对象
+// @Scope("request")    // 每个HTTP请求一个实例
+// @Scope("session")    // 每个用户会话一个实例
 @Component  // 没有写构造方法，Java 默认会生成无参构造方法
+@Scope("singleton") // 可以省略，默认就是这个
 public class JwtUtil {
 
     @Value("${jwt.secret:mySecretKey}") // 从配置文件中读取jwt.secret, 找不到配置时用 mySecretKey

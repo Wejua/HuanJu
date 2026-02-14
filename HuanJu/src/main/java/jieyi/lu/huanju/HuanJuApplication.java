@@ -15,7 +15,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
     配置 ViewResolver
     配置 20+ 个 Web 相关组件！
 @ComponentScan
-    扫描当前包及其子包下的所有组件
+    扫描当前包及其子包下的所有组件，只是注册，这一步不会创建对象
 */
 @SpringBootApplication
 public class HuanJuApplication {

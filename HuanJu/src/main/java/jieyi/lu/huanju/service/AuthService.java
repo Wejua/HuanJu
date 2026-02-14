@@ -18,6 +18,19 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
+    /*
+        客户端请求 /api/login
+        ↓
+    1. JwtAuthenticationFilter.doFilterInternal()  ← ⭐ 过滤器先执行！
+        ↓
+    2. DispatcherServlet 处理请求
+        ↓
+    3. 找到对应的 Controller 方法
+        ↓
+    4. AuthController.login()  ← ⭐ Controller 方法后执行！
+        ↓
+    5. 返回响应
+    * */
     @Transactional
     public LoginResponse login(LoginRequest loginRequest) {
         // 1. 验证用户是否存在

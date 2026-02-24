@@ -58,7 +58,7 @@ public class AuthService {
         return new LoginResponse(token, user.getId(), user.getUsername(),
                 user.getEmail(), user.getRole());
     }
-
+    
     @Transactional // 自动开启、提交或回滚数据库事务，保证数据操作要么全部成功，要么回到原点
     public RegisterResponse register(RegisterRequest request) {
         log.info("开始注册用户: {}", request.getUsername());

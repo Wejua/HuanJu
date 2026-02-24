@@ -29,3 +29,36 @@ Content-Type: application/json
   "nickname": "测试用户"
 }
 
+# 1. 获取最新活动列表（第1页，每页10条）
+curl "http://localhost:8080/api/activities/latest?page=1&size=10"
+
+# 2. 获取最新活动列表（格式化输出）
+curl "http://localhost:8080/api/activities/latest?page=1&size=10" | json_pp
+
+# 3. 获取第2页，每页5条
+curl "http://localhost:8080/api/activities/latest?page=2&size=5" | json_pp
+
+# 4. 按状态查询（即将开始）
+curl "http://localhost:8080/api/activities/status/UPCOMING?page=1&size=10" | json_pp
+
+# 5. 按状态查询（进行中）
+curl "http://localhost:8080/api/activities/status/ONGOING?page=1&size=10" | json_pp
+
+# 6. 按状态查询（已结束）
+curl "http://localhost:8080/api/activities/status/ENDED?page=1&size=10" | json_pp
+
+# 7. 按状态查询（已取消）
+curl "http://localhost:8080/api/activities/status/CANCELLED?page=1&size=10" | json_pp
+
+# 8. 搜索活动（关键词：爬山）
+curl "http://localhost:8080/api/activities/search?keyword=爬山&page=1&size=10" | json_pp
+
+# 9. 搜索活动（关键词：Spring）
+curl "http://localhost:8080/api/activities/search?keyword=Spring&page=1&size=10" | json_pp
+
+# 10. 搜索活动（关键词：聚餐）
+curl "http://localhost:8080/api/activities/search?keyword=聚餐&page=1&size=10" | json_pp
+
+# 11. 获取活动详情（需要活动ID，先查一个）
+ACTIVITY_ID=$(curl -s "http://localhost:8080/api/activities/latest?page=1&size=1" | grep -o '"id":[0-9]*' | head -1 | cut -d':' -f2)
+curl "http://localhost:8080/api/activities/${ACTIVITY_ID}" | json_pp

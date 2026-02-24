@@ -8,6 +8,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -44,4 +46,7 @@ public class User {
 
     @Column(length = 50)
     private String nickname;
+
+    @ManyToMany(mappedBy = "attendees")  // ⭐ 关键：由 Activity 维护关系， 属性类型List<Activity>中解析出是 Activity 表
+    private List<Activity> activities = new ArrayList<>();
 }

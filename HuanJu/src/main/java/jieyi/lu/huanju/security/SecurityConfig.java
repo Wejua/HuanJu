@@ -33,7 +33,7 @@ public class SecurityConfig {
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 设置会话管理策略为：无状态, REST API 应该是无状态的, 每次请求都带 Token，服务器不保存客户端状态
                 .authorizeHttpRequests(auth -> auth // 请求授权配置
-                        .requestMatchers("/api/login", "/api/login/test", "/api/register").permitAll() // 配置工公开接口  requestMatchers() - 匹配特定URL  permitAll() - 允许所有人访问（无需登录）
+                        .requestMatchers("/api/login", "/api/login/test", "/api/register", "/api/activities/**").permitAll() // 配置工公开接口  requestMatchers() - 匹配特定URL  permitAll() - 允许所有人访问（无需登录）
                         .anyRequest().authenticated() // 其他都要登录. anyRequest() - 所有其他请求  authenticated() - 需要认证
                 )
                 .addFilterBefore(new JwtAuthenticationFilter(jwtUtil, userDetailsService()), // 添加自定义过滤器

@@ -2,14 +2,18 @@ package jieyi.lu.huanju.service;
 
 import jieyi.lu.huanju.dto.LoginRequest;
 import jieyi.lu.huanju.dto.LoginResponse;
+import jieyi.lu.huanju.dto.RegisterRequest;
+import jieyi.lu.huanju.dto.RegisterResponse;
 import jieyi.lu.huanju.entity.User;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import jieyi.lu.huanju.repository.UserRepository;
 import jieyi.lu.huanju.security.JwtUtil;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -53,5 +57,42 @@ public class AuthService {
         // 5. 返回登录响应
         return new LoginResponse(token, user.getId(), user.getUsername(),
                 user.getEmail(), user.getRole());
+    }
+
+    @Transactional
+    public RegisterResponse register(RegisterRequest request) {
+        log.info("开始注册用户: {}", request.getUsername());
+
+        // 1. 检查用户名是否已存在
+        if (userRepository.existsByUsername(request.getUsername())) {
+            log.warn("注册失败：用户名已存在 - {}", request.getUsername());
+            throw new RuntimeException("用户名已存在");
+        }
+        // 2. 检查邮箱是否已存在
+        if (userRepository.existsByEmail(request.getEmail())) {
+            log.warn("注册失败：邮箱已被注册 - {}", request.getEmail());
+            throw new RuntimeException("邮箱已被注册");
+        }
+        // 3. 创建新用户
+        User user = new User();
+        user.setUsername(request.getUsername());
+        user.setPassword(passwordEncoder.encode(request.getPassword())); // 加密密码
+        user.setEmail(request.getEmail());
+        user.setNickname(request.getNickname() != null ? request.getNickname() : request.getUsername());
+        user.setRole("USER"); // 默认角色
+        user.setEnabled(true);
+        // 4. 保存到数据库
+        User savedUser = userRepository.save(user);
+        log.info("用户注册成功: {}, id: {}", savedUser.getUsername(), savedUser.getId());
+        // 5. 构建响应
+        return RegisterResponse.builder()
+                .id(savedUser.getId())
+                .username(savedUser.getUsername())
+                .email(savedUser.getEmail())
+                .nickname(savedUser.getNickname())
+                .role(savedUser.getRole())
+                .createdAt(savedUser.getCreatedAt())
+                .message("注册成功")
+                .build();
     }
 }

@@ -41,4 +41,7 @@ public class User {
     @UpdateTimestamp // 更新就填入当时的时间戳
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @Column(length = 50)
+    private String nickname;
 }

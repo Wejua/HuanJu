@@ -1,16 +1,6 @@
-/*
- * Flyway 迁移脚本 V1
- * 作者: jieyi.lu
- * 日期: 2024-01-01
- * 描述: 创建数据库和用户表
- 配置了 spring.flyway.locations=classpath:db/migration 后，该目录下的所有脚本都会按版本顺序自动执行。
- 脚本命名规范（必须遵守）V{版本号}__{描述}.sql
- 按版本号升序执行：V1 → V2 → V3 → V4 ...
- 每个脚本只执行一次，执行记录保存在 flyway_schema_history 表
- */
 
--- 使用数据库
--- USE `huan_ju_flux`;
+-- 切换到数据库
+USE `huan_ju_flux`;
 
 -- 创建用户表
 CREATE TABLE IF NOT EXISTS `user` (

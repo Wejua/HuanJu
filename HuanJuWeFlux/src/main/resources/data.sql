@@ -1,12 +1,8 @@
-/*
- * Flyway 迁移脚本 V3
- * 作者: jieyi.lu
- * 日期: 2024-03-01
- * 描述: 插入默认管理员用户（仅用于开发环境）
- * 注意：密码需要在应用启动后通过代码更新
- */
-
 USE `huan_ju_flux`;
+
+-- 插入测试数据（如果需要）
+INSERT IGNORE INTO `user` (`username`, `password`, `email`, `phone`) VALUES
+    ('admin2', 'adminpassword2', 'admin@example.com', '13800138001');
 
 -- 插入默认管理员（如果不存在）
 INSERT IGNORE INTO `user` (

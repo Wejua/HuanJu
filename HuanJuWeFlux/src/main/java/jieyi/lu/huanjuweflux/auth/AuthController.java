@@ -1,6 +1,7 @@
 package jieyi.lu.huanjuweflux.auth;
 
 import jakarta.validation.Valid;
+import jieyi.lu.huanjuweflux.common.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -22,17 +23,17 @@ public class AuthController {
      */
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    public Mono<ResponseEntity<UserDTO.UserInfoResponse>> register(
+    public Mono<ResponseEntity<ApiResponse<?>>> register(
             @Valid @RequestBody UserDTO.RegisterRequest request,
             ServerWebExchange exchange) {
 
         String ip = getClientIp(exchange);
 
         return userService.register(request, ip)
-                .map(userInfo -> ResponseEntity.status(HttpStatus.CREATED).body(userInfo))
+                .<ResponseEntity<ApiResponse<?>>>map(userInfo -> ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(userInfo)))
                 .onErrorResume(e -> {
                     log.error("注册失败: {}", e.getMessage());
-                    return Mono.just(ResponseEntity.badRequest().build());
+                    return Mono.just(ResponseEntity.badRequest().body(ApiResponse.error(e.getMessage(), 400)));
                 });
     }
 

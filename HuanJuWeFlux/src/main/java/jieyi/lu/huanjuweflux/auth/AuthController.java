@@ -22,19 +22,15 @@ public class AuthController {
      * 用户注册
      */
     @PostMapping("/register")
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.CREATED) // 可以省略，优先级比方法体里获取的低
     public Mono<ResponseEntity<ApiResponse<?>>> register(
             @Valid @RequestBody UserDTO.RegisterRequest request,
-            ServerWebExchange exchange) {
+            ServerWebExchange exchange) { // ServerWebExchange 是 WebFlux 的上下文，可获取请求信息
 
         String ip = getClientIp(exchange);
 
         return userService.register(request, ip)
-                .<ResponseEntity<ApiResponse<?>>>map(userInfo -> ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(userInfo)))
-                .onErrorResume(e -> {
-                    log.error("注册失败: {}", e.getMessage());
-                    return Mono.just(ResponseEntity.badRequest().body(ApiResponse.error(e.getMessage(), 400)));
-                });
+                .map(userInfo -> ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(userInfo)));
     }
 
     /**
@@ -48,11 +44,7 @@ public class AuthController {
         String ip = getClientIp(exchange);
 
         return userService.login(request, ip)
-                .map(ResponseEntity::ok)
-                .onErrorResume(e -> {
-                    log.error("登录失败: {}", e.getMessage());
-                    return Mono.just(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
-                });
+                .map(ResponseEntity::ok);
     }
 
     /**

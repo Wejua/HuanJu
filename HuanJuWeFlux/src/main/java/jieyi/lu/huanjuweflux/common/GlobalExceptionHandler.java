@@ -45,8 +45,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public Mono<ResponseEntity<ApiResponse>> handleException(Exception e) {
         log.error("系统异常: ", e);
-
-        ApiResponse errorResponse = ApiResponse.error("系统内部错误", HttpStatus.INTERNAL_SERVER_ERROR.value());
+        ApiResponse errorResponse = ApiResponse.error(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value());
 
         return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse));
     }

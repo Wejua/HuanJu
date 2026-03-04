@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.socket.WebSocketHandler;
 import org.springframework.web.reactive.socket.WebSocketMessage;
 import org.springframework.web.reactive.socket.WebSocketSession;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.Sinks;
 
@@ -28,6 +27,9 @@ public class IMWebSocketHandler implements WebSocketHandler {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private MessageEncryptor messageEncryptor;
 
     @Override
     public Mono<Void> handle(WebSocketSession session) {
@@ -59,7 +61,7 @@ public class IMWebSocketHandler implements WebSocketHandler {
                 .doOnError(e -> log.error("Error handling message: {}", e.getMessage()))
                 .then();
 
-        // 发送消息给客户端
+        // 发送消息给客户端（加入加密）
         Mono<Void> output = sink.asFlux()
                 .flatMap(message -> sendMessage(session, message))
                 .doOnError(e -> log.error("Error sending message: {}", e.getMessage()))
@@ -81,6 +83,17 @@ public class IMWebSocketHandler implements WebSocketHandler {
             MessageDTO message = objectMapper.readValue(payload, MessageDTO.class);
             message.setFromUserId(fromUserId);
             message.setTimestamp(java.time.LocalDateTime.now());
+
+            // 解密收到的消息（如果是加密的）
+            if (message.getContent() != null && !message.getContent().isEmpty()) {
+                try {
+                    String decryptedContent = messageEncryptor.decrypt(message.getContent());
+                    message.setContent(decryptedContent);
+                } catch (Exception e) {
+                    log.warn("消息解密失败，使用原内容: {}", e.getMessage());
+                    // 解密失败，继续使用原内容（可能是明文）
+                }
+            }
 
             switch (message.getAction()) {
                 case 1: // 发送消息
@@ -129,8 +142,17 @@ public class IMWebSocketHandler implements WebSocketHandler {
         return Mono.empty();
     }
 
+    /**
+     * 发送消息（加密版本）
+     */
     private Mono<Void> sendMessage(WebSocketSession session, MessageDTO message) {
         try {
+            // 对消息内容加密
+            if (message.getContent() != null && !message.getContent().isEmpty()) {
+                String encryptedContent = messageEncryptor.encrypt(message.getContent());
+                message.setContent(encryptedContent);
+            }
+
             String payload = objectMapper.writeValueAsString(message);
             return session.send(Mono.just(session.textMessage(payload)));
         } catch (Exception e) {

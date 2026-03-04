@@ -1,5 +1,8 @@
 package jieyi.lu.huanjuweflux.auth;
 
+import jieyi.lu.huanjuweflux.common.User;
+import jieyi.lu.huanjuweflux.common.UserDTO;
+import jieyi.lu.huanjuweflux.common.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

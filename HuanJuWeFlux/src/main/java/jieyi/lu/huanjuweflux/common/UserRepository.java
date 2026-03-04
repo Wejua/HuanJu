@@ -1,4 +1,4 @@
-package jieyi.lu.huanjuweflux.auth;
+package jieyi.lu.huanjuweflux.common;
 
 import org.springframework.data.r2dbc.repository.Modifying;
 import org.springframework.data.r2dbc.repository.Query;

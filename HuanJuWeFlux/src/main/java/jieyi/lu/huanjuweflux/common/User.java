@@ -1,4 +1,4 @@
-package jieyi.lu.huanjuweflux.auth;
+package jieyi.lu.huanjuweflux.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,6 +18,7 @@ public class User {
     @Id
     private Long id;
     private String username;
+    private String nickname;
     private String password;
     private String email;
     private String phone;

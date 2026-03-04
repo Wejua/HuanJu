@@ -1,4 +1,4 @@
-package jieyi.lu.huanjuweflux.auth;
+package jieyi.lu.huanjuweflux.common;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;

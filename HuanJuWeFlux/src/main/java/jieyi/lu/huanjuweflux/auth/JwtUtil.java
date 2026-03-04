@@ -24,7 +24,7 @@ public class JwtUtil {
     private String issuer;
 
     /**
-     * 生成JWT令牌
+     * 生成 JWT 令牌
      */
     public String generateToken(Long userId, String username) {
         Algorithm algorithm = Algorithm.HMAC256(secret);
@@ -41,7 +41,7 @@ public class JwtUtil {
     }
 
     /**
-     * 验证JWT令牌
+     * 验证 JWT 令牌
      */
     public Mono<DecodedJWT> verifyToken(String token) {
         return Mono.fromCallable(() -> {
@@ -58,7 +58,7 @@ public class JwtUtil {
     }
 
     /**
-     * 从令牌中获取用户ID
+     * 从令牌中获取用户 ID
      */
     public Long getUserIdFromToken(String token) {
         DecodedJWT jwt = JWT.decode(token);

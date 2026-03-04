@@ -1,0 +1,120 @@
+<!--
+1. 打开测试页面
+用 Chrome 打开之前创建的 test.html 文件
+
+2. 测试私聊功能
+第一个窗口：用户ID 1，点击连接
+
+第二个窗口：用户ID 2，点击连接
+
+在第一个窗口输入消息，发送给用户2
+
+3. 测试群聊功能
+两个窗口都用群组ID 1
+
+发送消息，两个窗口应该都能收到
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>WebSocket IM测试</title>
+    <script>
+        let websocket;
+
+        function connect() {
+            const userId = document.getElementById('userId').value;
+            websocket = new WebSocket('ws://localhost:8080/im?userId=' + userId);
+
+            websocket.onopen = function() {
+                console.log('Connected');
+                // 发送心跳
+                setInterval(() => {
+                    sendMessage({
+                        action: 2 // 心跳
+                    });
+                }, 30000);
+            };
+
+            websocket.onmessage = function(event) {
+                const message = JSON.parse(event.data);
+                console.log('Received:', message);
+                displayMessage(message);
+            };
+
+            websocket.onclose = function() {
+                console.log('Disconnected');
+            };
+        }
+
+        function sendPrivateMessage() {
+            const toUserId = document.getElementById('toUserId').value;
+            const content = document.getElementById('messageContent').value;
+
+            sendMessage({
+                type: 1, // 私聊
+                action: 1, // 发送消息
+                toId: parseInt(toUserId),
+                content: content,
+                contentType: 1 // 文本
+            });
+        }
+
+        function sendGroupMessage() {
+            const groupId = document.getElementById('groupId').value;
+            const content = document.getElementById('messageContent').value;
+
+            sendMessage({
+                type: 2, // 群聊
+                action: 1, // 发送消息
+                toId: parseInt(groupId),
+                content: content,
+                contentType: 1 // 文本
+            });
+        }
+
+        function sendMessage(message) {
+            message.timestamp = new Date().toISOString();
+            websocket.send(JSON.stringify(message));
+        }
+
+        function displayMessage(message) {
+            const log = document.getElementById('log');
+            log.value += JSON.stringify(message) + '\n';
+        }
+    </script>
+</head>
+<body>
+<h2>WebSocket IM测试</h2>
+
+<div>
+    <label>用户ID:</label>
+    <input type="text" id="userId" value="1">
+    <button onclick="connect()">连接</button>
+</div>
+
+<div style="margin-top: 20px;">
+    <h3>发送消息</h3>
+    <div>
+        <label>接收用户ID:</label>
+        <input type="text" id="toUserId" value="2">
+        <button onclick="sendPrivateMessage()">发送私聊</button>
+    </div>
+    <div style="margin-top: 10px;">
+        <label>群组ID:</label>
+        <input type="text" id="groupId" value="1">
+        <button onclick="sendGroupMessage()">发送群聊</button>
+    </div>
+    <div style="margin-top: 10px;">
+        <label>消息内容:</label>
+        <input type="text" id="messageContent" value="Hello" style="width: 300px;">
+    </div>
+</div>
+
+<div style="margin-top: 20px;">
+    <h3>消息日志</h3>
+    <textarea id="log" style="width: 500px; height: 300px;"></textarea>
+</div>
+</body>
+</html>
